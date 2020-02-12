@@ -19,8 +19,8 @@ const GoalItems = props => {
     <TouchableOpacity activeOpacity={0.4} onPress={props.deleteItem} style={styles.listItem}>
       <LinearGradient
         colors={['grey', 'black']}
-        start={[0.0, props.random2]}
-        end={[props.random3, 0.0]}
+        start={[0.0, 0]}
+        end={[0.6, 0.0]}
         style={styles.listItem}
         onPress={() => setIsAddMode(true)}
       >

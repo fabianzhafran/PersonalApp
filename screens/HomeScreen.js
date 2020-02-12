@@ -1,26 +1,31 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
-import {
-  Image,
-  Platform,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Platform, FlatList, StyleSheet, TouchableOpacity, View, Dimensions, Text } from 'react-native';
+import { ApplicationProvider, TopNavigation } from '@ui-kitten/components';
+import { mapping, light as lightTheme } from '@eva-design/eva';
 import { LinearGradient } from 'expo-linear-gradient';
-
-import { MonoText } from '../components/StyledText';
 
 import GoalInput from '../components/GoalInput';
 import GoalItems from '../components/GoalItems';
 
-
+// const client = new Twitter({
+//   consumer_key: Environment.TWITTER_API_KEY,
+//   consumer_secret: Environment.TWITTER_API_SECRET_KEY,
+//   access_token_key: Environment.TWITTER_ACCESS_TOKEN,
+//   access_token_secret: Environment.TWITTER_ACCESS_SECRET_TOKEN
+// });
 
 export default function HomeScreen() {
   const [courseGoals, setCourseGoals] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
+
+  // useEffect(async () => {
+  //   const consumer_key = Environment.TWITTER_API_KEY;
+  //   const consumer_secret = Environment.TWITTER_API_SECRET_KEY;
+  //   const bearer_token = consumer_key + ':' + consumer_secret;
+  //   const encoded_bearer_token = new Buffer(bearer_token).toString('base64'); 
+  //   await fetch('http://')
+  // });
 
   const addGoalHandler = (enterGoal) => {
     console.log(courseGoals);
@@ -48,45 +53,49 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style = {[styles.screen, styles.container]}>
-      <GoalInput 
-        visible={isAddMode}
-        onAddGoal={addGoalHandler}
-        onCancelGoal={cancelGoalAddHandler}
-      />
+    <ApplicationProvider mapping={mapping} theme={lightTheme}>
+      <View style = {[styles.screen, styles.container]}>
+        <View style={styles.topNavigation}>
+          <Text style={styles.topText}>Todo List (in dev)</Text> 
+          <View style={styles.topNavigationCurve} />
+        </View>
+        <GoalInput 
+          visible={isAddMode}
+          onAddGoal={addGoalHandler}
+          onCancelGoal={cancelGoalAddHandler}
+        />
 
-      {/* <TopBar /> */}
-      {/* <View style={{position : 'absolute', width : 50, height : 50, backgroundColor : 'black', }} */}
-
-      <FlatList
-        keyExtractor={(item, index) => item.id} 
-        data={courseGoals}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        renderItem={itemData => <GoalItems 
-                                  title={itemData.item.value} 
-                                  deleteItem={deleteGoalHandler.bind(this, itemData.item.id)}
-                                  random1={Math.random()}
-                                  random2={Math.random()}
-                                  random3={Math.random()}
-                                  random4={Math.random()}  
-                                />
-                    }
-      />
-      
-      <TouchableOpacity activeOpacity={0.4} style= {styles.addButton} onPress={() => isAddModeHandler()}>
-        <LinearGradient
-        colors={['rgb(70, 70, 70)', 'rgb(110, 110, 110]', 'rgb(50, 50, 50)']}
-        style={styles.addButton}
-        start={[0.0, 0.0]}
-        end={[1.0, 1.0]}
-        onPress={() => setIsAddMode(true)}
-        >
-          <View style={styles.plusHorizontal} />
-          <View style={styles.plusVertical} />
-        </LinearGradient>
-      </TouchableOpacity>
-    </View>
+        <FlatList
+          style={styles.scrollViewStyle}
+          keyExtractor={(item, index) => item.id} 
+          data={courseGoals}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          renderItem={itemData => <GoalItems 
+                                    title={itemData.item.value} 
+                                    deleteItem={deleteGoalHandler.bind(this, itemData.item.id)}
+                                    random1={Math.random()}
+                                    random2={Math.random()}
+                                    random3={Math.random()}
+                                    random4={Math.random()}  
+                                  />
+                      }
+        />
+        
+        <TouchableOpacity activeOpacity={0.4} style= {styles.addButton} onPress={() => isAddModeHandler()}>
+          <LinearGradient
+          colors={['rgb(70, 70, 70)', 'white']}
+          style={styles.addButton}
+          start={[0.0, 0.0]}
+          end={[1.0, 1.0]}
+          onPress={() => setIsAddMode(true)}
+          >
+            <View style={styles.plusHorizontal} />
+            <View style={styles.plusVertical} />
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </ApplicationProvider>
   );
 }
 
@@ -96,7 +105,8 @@ HomeScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   screen : {
-    padding : 0,
+    padding: 0,
+    fontFamily: 'space-mono',
   },
   addButton : {
     position: "absolute",
@@ -104,7 +114,7 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 60,
     marginTop: 540,
-    marginLeft: 310,
+    marginLeft: 0.8 * Math.round(Dimensions.get('window').width),
     alignItems: "center",
     justifyContent: "center"
   },
@@ -122,90 +132,30 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 3
   },
+  scrollViewStyle: {
+    padding: 0,
+    margin: 0,
+    backgroundColor: 'rgba(20, 20, 75, 1.0)',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
+  topNavigation: { 
     paddingTop: 30,
+    backgroundColor: 'black',
   },
-  welcomeContainer: {
-    alignItems: 'center',
+  topNavigationCurve: {
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: 'rgba(20, 20, 75, 1.0)',
+    minHeight: 30,
+  },
+  topText: {
+    marginLeft: 20,
     marginTop: 10,
     marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+    fontSize: 20,
+    color: 'white'
+  }
 });

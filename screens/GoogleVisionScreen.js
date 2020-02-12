@@ -1,6 +1,5 @@
 import React from "react";
-import {  ActivityIndicator,  Button,  Clipboard,  FlatList,  Image,  Platform, Share,  StyleSheet,  Text,  TouchableOpacity,  ScrollView, View } from "react-native";
-import { vw, hw, vmin, vmax } from "react-native-viewport-units";
+import {  ActivityIndicator, Button, Clipboard, Dimensions, FlatList, Image, Platform, Share, StyleSheet, Text, TouchableOpacity, ScrollView, View } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
@@ -51,8 +50,8 @@ export default class App extends React.Component {
 
           <View style={styles.helpContainer}>
             <View style={styles.buttonFlex}>
-              <Text onPress={this._pickImage}>Select From Gallery</Text>
-              <Text onPress={this._takePhoto}>Take a photo</Text>
+              <Text onPress={this._pickImage}>Select From Gallery     |</Text>
+              <Text onPress={this._takePhoto}>|     Take a photo</Text>
             </View>
 
             {this.state.googleResponse && (
@@ -333,7 +332,7 @@ const styles = StyleSheet.create({
   helpContainer: {
     marginTop: 15,
     alignItems: "center",
-    minWidth: 100*vw,
+    minWidth: 100,
   },
 
   buttonFlex: {
