@@ -1,5 +1,14 @@
 import React from "react";
-import {  ActivityIndicator, Button, Clipboard, Dimensions, FlatList, Image, Platform, Share, StyleSheet, Text, TouchableOpacity, ScrollView, View } from "react-native";
+import {  
+  ActivityIndicator, 
+  Clipboard, 
+  FlatList, 
+  Image, 
+  Share, 
+  StyleSheet, 
+  Text, 
+  ScrollView, 
+  View } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
@@ -7,10 +16,11 @@ import * as Permissions from "expo-permissions";
 import uuid from "uuid";
 import Environment from "../config/environment";
 import firebase from "../utils/firebase";
+import { FlexStyleProps } from "@ui-kitten/components/ui/support/typings";
 
 console.disableYellowBox = true;
 
-export default class App extends React.Component {
+export default class GoogleVisionScreen extends React.Component {
   state = {
     image: null,
     uploading: false,
@@ -26,47 +36,40 @@ export default class App extends React.Component {
     let { image } = this.state;
 
     return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require("../assets/images/robot-dev.png")
-                  : require("../assets/images/robot-prod.png")
-              }
-              style={styles.welcomeImage}
-            />
+        <View style={styles.container}>
+          <View style={styles.topNavigation}>
+            <Text style={styles.topText}>Google Vision (in dev)</Text> 
+            <View style={styles.topNavigationCurve} />
           </View>
-
-          <View style={styles.getStartedContainer}>
-            {image ? null : (
-              <Text style={styles.getStartedText}>Google Cloud Vision</Text>
-            )}
-          </View>
-
-          <View style={styles.helpContainer}>
-            <View style={styles.buttonFlex}>
-              <Text onPress={this._pickImage}>Select From Gallery     |</Text>
-              <Text onPress={this._takePhoto}>|     Take a photo</Text>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+          >
+            <View style={styles.getStartedContainer}>
+              {image ? null : (
+                <Text style={styles.getStartedText}>Google Cloud Vision</Text>
+              )}
             </View>
 
-            {this.state.googleResponse && (
-              <FlatList
-                data={this.state.googleResponse.responses[0].labelAnnotations}
-                extraData={this.state}
-                keyExtractor={this._keyExtractor}
-                renderItem={({ item }) => <Text>Item: {item.description}</Text>}
-              />
-            )}
-            {this._maybeRenderImage()}
-            {this._maybeRenderUploadingOverlay()}
-          </View>
-        </ScrollView>
-      </View>
+            <View style={styles.helpContainer}>
+              <View style={styles.buttonFlex}>
+                <Text style={styles.allText} onPress={this._pickImage}>Select From Gallery     |</Text>
+                <Text style={styles.allText} onPress={this._takePhoto}>|     Take a photo</Text>
+              </View>
+
+              {this.state.googleResponse && (
+                <FlatList
+                  data={this.state.googleResponse.responses[0].labelAnnotations}
+                  extraData={this.state}
+                  keyExtractor={this._keyExtractor}
+                  renderItem={({ item }) => <Text style={styles.allText}>Item: {item.description}</Text>}
+                />
+              )}
+              {this._maybeRenderImage()}
+              {this._maybeRenderUploadingOverlay()}
+            </View>
+          </ScrollView>
+        </View>
     );
   }
 
@@ -74,7 +77,7 @@ export default class App extends React.Component {
     return array.map(function(item, i) {
       return (
         <View key={i}>
-          <Text>{item}</Text>
+          <Text style={styles.allText}>{item}</Text>
         </View>
       );
     });
@@ -114,11 +117,12 @@ export default class App extends React.Component {
           elevation: 2
         }}
       >
-        <Button
-          style={{ marginBottom: 10 }}
+        <Text
+          style={{ marginBottom: 10 }, styles.allText}
           onPress={() => this.submitToGoogle()}
-          title="Analyze!"
-        />
+        >
+          Analyze!
+        </Text>
 
         <View
           style={{
@@ -136,7 +140,7 @@ export default class App extends React.Component {
         <Text
           onPress={this._copyToClipboard}
           onLongPress={this._share}
-          style={{ paddingVertical: 10, paddingHorizontal: 10 }}
+          style={{ paddingVertical: 10, paddingHorizontal: 10 }, styles.allText}
         />
 
         <Text>Raw JSON:</Text>
@@ -145,7 +149,7 @@ export default class App extends React.Component {
           <Text
             onPress={this._copyToClipboard}
             onLongPress={this._share}
-            style={{ paddingVertical: 10, paddingHorizontal: 10 }}
+            style={{ paddingVertical: 10, paddingHorizontal: 10 }, styles.allText}
           >
             JSON.stringify(googleResponse.responses)}
           </Text>
@@ -157,7 +161,7 @@ export default class App extends React.Component {
   _keyExtractor = (item, index) => item.id;
 
   _renderItem = item => {
-    <Text>response: {JSON.stringify(item)}</Text>;
+    <Text style={styles.allText}>response: {JSON.stringify(item)}</Text>;
   };
 
   _share = () => {
@@ -196,13 +200,12 @@ export default class App extends React.Component {
       this.setState({ uploading: true });
 
       if (!pickerResult.cancelled) {
-        console.log('sampai line 212');
         uploadUrl = await uploadImageAsync(pickerResult.uri);
         this.setState({ image: uploadUrl });
       }
     } catch (e) {
       console.log(e);
-      alert("Upload failed, sorry :(");
+      alert("Upload failed, check internet connection.");
     } finally {
       this.setState({ uploading: false });
     }
@@ -260,8 +263,6 @@ export default class App extends React.Component {
 }
 
 async function uploadImageAsync(uri) {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = function() {
@@ -282,18 +283,25 @@ async function uploadImageAsync(uri) {
     .child(uuid.v4());
   const snapshot = await ref.put(blob);
 
-  // We're done with the blob, close and release it
   blob.close();
 
   return await snapshot.ref.getDownloadURL();
 }
 
+function MyText() {
+  return (
+    <Text style={styles.allText}>
+      {props.text}
+    </Text>
+  )  
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingBottom: 10,
-    fontFamily: 'space-mono'
+    padding: 0,
+    fontFamily: 'space-mono',
+    backgroundColor: 'rgba(20, 20, 75, 1.0)',
   },
   developmentModeText: {
     marginBottom: 20,
@@ -321,22 +329,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 50
   },
-
+  ButtonTxtColor: {
+    color: "white",
+  },
   getStartedText: {
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
     lineHeight: 24,
     textAlign: "center"
   },
-
   helpContainer: {
     marginTop: 15,
     alignItems: "center",
     minWidth: 100,
   },
-
   buttonFlex: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  topNavigation: { 
+    paddingTop: 30,
+    backgroundColor: 'black',
+  },
+  topNavigationCurve: {
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: 'rgba(20, 20, 75, 1.0)',
+    minHeight: 30,
+  },
+  topText: {
+    marginLeft: 20,
+    marginTop: 10,
+    marginBottom: 20,
+    fontSize: 20,
+    color: 'white'
+  },
+  allText: {
+    color: 'rgba(200, 200, 200, 1.0)'
   }
 });

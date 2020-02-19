@@ -19,14 +19,6 @@ export default function HomeScreen() {
   const [courseGoals, setCourseGoals] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
 
-  // useEffect(async () => {
-  //   const consumer_key = Environment.TWITTER_API_KEY;
-  //   const consumer_secret = Environment.TWITTER_API_SECRET_KEY;
-  //   const bearer_token = consumer_key + ':' + consumer_secret;
-  //   const encoded_bearer_token = new Buffer(bearer_token).toString('base64'); 
-  //   await fetch('http://')
-  // });
-
   const addGoalHandler = (enterGoal) => {
     console.log(courseGoals);
     setCourseGoals(currentGoals => {

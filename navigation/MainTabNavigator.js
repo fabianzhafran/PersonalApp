@@ -6,12 +6,15 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import GoogleVisionScreen from '../screens/GoogleVisionScreen';
+import ThreeJsScreen from '../screens/ThreeJsScreen';
+import { CullFaceNone } from 'three';
 
 const config = Platform.select({
-  web: { headerMode: 'screen' },
-  default: {},
+  web: { headerMode: 'none' },
+  default: { headerMode : 'none' },
 });
 
+// ~~~~~~~~~~~~~ HOME STACK NAVIGATOR
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
@@ -31,6 +34,7 @@ HomeStack.navigationOptions = {
 
 HomeStack.path = '';
 
+// ~~~~~~~~~~~~~ GOOGLE VISION STACK NAVIGATOR
 const GoogleVisionStack = createStackNavigator(
   {
     GoogleVision: GoogleVisionScreen,
@@ -47,9 +51,29 @@ GoogleVisionStack.navigationOptions = {
 
 GoogleVisionStack.path = '';
 
+// ~~~~~~~~~~~~~ THREE JS SCREEN STACK NAVIGATOR 
+const ThreeJsStack = createStackNavigator(
+  {
+    ThreeJs: ThreeJsScreen,
+  },
+  config
+);
+
+ThreeJsStack.navigationOptions = {
+  tabBarLabel: '3D Playground',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={'eye'} />
+  ),
+};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~ BOTTOM TAB NAV
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
+
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   GoogleVisionStack,
+  ThreeJsStack,
 }, {
   tabBarOptions : {
     style : {
@@ -57,17 +81,11 @@ const tabNavigator = createBottomTabNavigator({
       // opacity : 0.3,
       margin : 0,
       padding : 0,
+      headerMode : 'none',
     }
   }
 });
 
 tabNavigator.path = '';
-
-const styles = StyleSheet.create({
-  navTab : {
-    backgroundColor : 'grey',
-    opacity : 0.5,
-  }
-})
 
 export default tabNavigator;
