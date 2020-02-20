@@ -46,7 +46,23 @@ export default class App extends React.Component {
     });
     
     this.cube = new THREE.Mesh(geometry, material);
+    this.cube2 = new THREE.Mesh(geometry, material);
+    this.cube3 = new THREE.Mesh(geometry, material);
+    this.cube4 = new THREE.Mesh(geometry, material);
+    this.cube.position.set(0, 6, 0)
+    this.cube2.position.set(0, 4, 0)
+    this.cube3.position.set(0, 2, 0)
+    this.cube4.position.set(0, 0, 0)
+
+    this.cube.rotation.y = 0;
+    this.cube2.rotation.y = 0.2;
+    this.cube3.rotation.y = 0.4;
+    this.cube4.rotation.y = 0.6;
+
     this.scene.add(this.cube);
+    this.scene.add(this.cube2);
+    this.scene.add(this.cube3);
+    this.scene.add(this.cube4);
 
     this.scene.add(new THREE.AmbientLight(0x404040));
 
@@ -56,7 +72,10 @@ export default class App extends React.Component {
   };
 
   onRender = delta => {
-    this.cube.rotation.y += 2 * delta;
+    this.cube.rotation.y +=  0.01;
+    this.cube2.rotation.y +=  0.01;
+    this.cube3.rotation.y +=  0.01;
+    this.cube4.rotation.y +=  0.01;
     this.renderer.render(this.scene, this.camera);
   };
 }

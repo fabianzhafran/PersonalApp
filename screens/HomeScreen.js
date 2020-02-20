@@ -8,13 +8,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import GoalInput from '../components/GoalInput';
 import GoalItems from '../components/GoalItems';
 
-// const client = new Twitter({
-//   consumer_key: Environment.TWITTER_API_KEY,
-//   consumer_secret: Environment.TWITTER_API_SECRET_KEY,
-//   access_token_key: Environment.TWITTER_ACCESS_TOKEN,
-//   access_token_secret: Environment.TWITTER_ACCESS_SECRET_TOKEN
-// });
-
 export default function HomeScreen() {
   const [courseGoals, setCourseGoals] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
@@ -66,10 +59,6 @@ export default function HomeScreen() {
           renderItem={itemData => <GoalItems 
                                     title={itemData.item.value} 
                                     deleteItem={deleteGoalHandler.bind(this, itemData.item.id)}
-                                    random1={Math.random()}
-                                    random2={Math.random()}
-                                    random3={Math.random()}
-                                    random4={Math.random()}  
                                   />
                       }
         />

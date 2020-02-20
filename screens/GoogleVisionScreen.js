@@ -16,7 +16,6 @@ import * as Permissions from "expo-permissions";
 import uuid from "uuid";
 import Environment from "../config/environment";
 import firebase from "../utils/firebase";
-import { FlexStyleProps } from "@ui-kitten/components/ui/support/typings";
 
 console.disableYellowBox = true;
 
@@ -286,14 +285,6 @@ async function uploadImageAsync(uri) {
   blob.close();
 
   return await snapshot.ref.getDownloadURL();
-}
-
-function MyText() {
-  return (
-    <Text style={styles.allText}>
-      {props.text}
-    </Text>
-  )  
 }
 
 const styles = StyleSheet.create({
