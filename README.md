@@ -1,7 +1,7 @@
 # PersonalApp
 React native playground for myself.
 
-You need to have a Google Vision API Key in order for this app to run.
+You need to have a Google Vision API Key and a firebase account in order for this app to run.
 
 To open the app, you'll need to download Expo in your phone and the Expo CLI for your laptop.
 First, go to your directory file, and then run the command "npm start".
